@@ -1,0 +1,149 @@
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+
+public class RegexHelper {
+    public static final String DATE_FORMAT = "dd/MM/yyyy";
+    private static final DateTimeFormatter JODA_DATE_FORMAT = DateTimeFormat.forPattern(DATE_FORMAT);
+    private static final String ALPHABETIC_PATTERN = "^[a-zA-Z\\ ]*$";
+
+    private static final String NAME_PATTERN = "^[a-zA-Z'\\s\\.]*$";
+    private static final String LAST_NAME_PATTERN = "^[a-zA-Z'\\s\\.]*$";
+    private static final String ALPHANUMERIC_PATTERN = "^[a-zA-Z0-9]*$";
+    private static final String ADDRESS_PATTERN = "^[A-Za-z0-9'\\[\\]()\\.\\-\\s\\,\\/\\#]*$";
+    private static final String DIGIT_PATTERN = "\\d+";
+    private static final String CITY_PATTERN = "^[a-zA-Z0-9\\s]*$";
+
+    private static final String ATLEAST_ONE_ALPHABETIC_PATTERN = "^[a-zA-Z]+$";
+
+    private static final String IFSC_PATTERN = "[a-zA-Z]{4}[0][a-zA-Z0-9]{6}";
+
+    private static final Pattern alphabetsPattern = Pattern.compile(ALPHABETIC_PATTERN);
+    private static final Pattern digitPattern = Pattern.compile(DIGIT_PATTERN);
+    private static final Pattern alphaNumericPattern = Pattern.compile(ALPHANUMERIC_PATTERN);
+    private static final Pattern addressPattern = Pattern.compile(ADDRESS_PATTERN);
+    private static final Pattern namePattern = Pattern.compile(NAME_PATTERN);
+    private static final Pattern lastNamePattern = Pattern.compile(LAST_NAME_PATTERN);
+    private static final Pattern alphaNumericWithSpace = Pattern.compile(CITY_PATTERN);
+    private static final Pattern atleastOneAlphabeticPattern = Pattern.compile(ATLEAST_ONE_ALPHABETIC_PATTERN);
+    private static final Pattern ifscPattern = Pattern.compile(IFSC_PATTERN);
+
+    public static final String ALT_DATE_FORMAT = "dd-MM-yyyy";
+
+    public static boolean validateDigits(final String str, int length) {
+        if (StringUtils.isBlank(str))
+            return false;
+        if (str.length() == length) {
+            Matcher matcher = digitPattern.matcher(str);
+            return matcher.matches();
+        }
+        return false;
+    }
+
+    public static DateTime convertToDateTime(String str) throws Exception {
+        if (StringUtils.isBlank(str)) {
+            throw new IllegalArgumentException();
+        }
+        DateTime dob;
+        try {
+            dob = JODA_DATE_FORMAT.parseDateTime(str);
+        } catch (Exception ex) {
+            throw ex;
+        }
+        return dob;
+    }
+
+    public static String convertDateToString(Date date) throws Exception {
+        if (date == null) {
+            throw new IllegalArgumentException();
+        }
+        String dob;
+        try {
+            dob = JODA_DATE_FORMAT.print(date.getTime());
+        } catch (Exception ex) {
+            throw ex;
+        }
+        return dob;
+    }
+
+    public static boolean validateName(String str) {
+        if (StringUtils.isBlank(str))
+            return false;
+
+        Matcher matcher = namePattern.matcher(str);
+        return matcher.matches();
+    }
+
+    public static boolean validateLastName(String str) {
+        if (StringUtils.isBlank(str))
+            return false;
+
+        Matcher matcher = lastNamePattern.matcher(str);
+        return matcher.matches();
+    }
+
+    public static boolean validateAddressLine(String addressLine) {
+        if (StringUtils.isBlank(addressLine))
+            return false;
+
+        Matcher matcher = addressPattern.matcher(addressLine);
+        return matcher.matches();
+    }
+
+    public static boolean alphanumericWithSpace(String str) {
+        if (StringUtils.isBlank(str))
+            return false;
+
+        Matcher matcher = alphaNumericWithSpace.matcher(str);
+        return matcher.matches();
+    }
+
+
+    public static boolean atleastSingleAlphabet(String str) {
+        if (StringUtils.isBlank(str))
+            return false;
+
+        Matcher matcher = atleastOneAlphabeticPattern.matcher(str);
+        return matcher.matches();
+
+    }
+
+    public static boolean ifscValidation(String ifsc) {
+        Matcher matcher =   ifscPattern.matcher(ifsc);
+        return matcher.matches();
+    }
+
+    public static boolean bankAccountNumberValidation(String accountNumber) {
+        Matcher matcher =   digitPattern.matcher(accountNumber);
+        return matcher.matches();
+    }
+
+    public static boolean isValidDigit(String displayOrder) {
+        Matcher matcher =   digitPattern.matcher(displayOrder);
+        return matcher.matches();
+    }
+
+    public static String convertDateFromOneFormatToOther(String dateStr, String firstFormat,String secondFormat) throws Exception{
+
+        SimpleDateFormat originalFormat = new SimpleDateFormat(firstFormat);
+        Date date = null;
+        try {
+            date = originalFormat.parse(dateStr);
+            DateFormat destDf = new SimpleDateFormat(secondFormat);
+            return destDf.format(date);
+        } catch (ParseException e) {
+            throw e;
+        }
+    }
+
+
+}
